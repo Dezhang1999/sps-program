@@ -26,3 +26,9 @@ function addRandomGreeting() {
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = greeting;
 }
+
+async function getAlistOfQuotes(){
+  const response = await fetch('/data');
+  const quote = await response.text();
+  document.getElementById('quote-container').innerText = quote;
+}
