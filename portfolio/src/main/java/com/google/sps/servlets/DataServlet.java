@@ -56,4 +56,12 @@ public class DataServlet extends HttpServlet {
         response.getWriter().println(quote);
     }
   }
+
+  private String toJason(ArrayList<String> list){
+      String jason = "{";
+      for(int i=0;i<list.size(),i++){
+          jason+="\quote"+i+"\:"; 
+          jason+="\"+
+      }
+  }
 }
