@@ -24,7 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   private static int TIME_VISTED = 0;
-  private List<String> quotes;
+  private List<String> quotes, comments;
+  private static Comparator COMMENTS_COMPARATOR = new SortByName();
+  private static Comparator LENGTH_COMPARATOR = new SortByLength();
 
   @Override
   public void init() {
@@ -70,4 +72,37 @@ public class DataServlet extends HttpServlet {
      jason+="}";
      return jason;     
   }
+
+   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+       String input = request.getParameter("text-input");
+       String[] inputs = input.split(",");
+       comments = Arrays.asList(inputs);
+       if(Boolean.parseBoolean(request.getParameter("sort-by-length"))){
+           Collections.sort(comments,LENGTH_COMPARATOR);
+       }
+       if(Boolean.parseBoolean(request.getParameter("sort-by-comments"))){
+            Collections.sort(comments,COMMENTS_COMPARATOR);
+       }
+       printComments(comments, response);
+   }
+
+   private void printComments(List<String> li, HttpServletResponse response) throws IOException{
+        response.setContentType("text/html");
+        for(String comments : li){
+            response.getWriter().println(comments+"</br>");
+        }
+   }
+    private static class SortByName implements Comparator<String>{
+        public int compare(String c1, String c2){
+            return c1.compareTo(c2);
+        }
+    }
+
+    private static class SortByLength implements Comparator<String>{
+        public int compare(String c1, String c2){
+            return Integer.compare(c1.length(), c2.length());
+        }
+    }
 }
+
+ 
