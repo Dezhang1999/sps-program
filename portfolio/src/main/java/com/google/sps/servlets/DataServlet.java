@@ -16,6 +16,10 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.gson.Gson;
 import java.util.*;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -29,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 public class DataServlet extends HttpServlet {
   private static int TIME_VISTED = 0;
   private List<String> quotes, comments;
-  private static Comparator COMMENTS_COMPARATOR = new SortByName();
+  private static Comparator TIME_COMPARATOR = new SortByTime();
   private static Comparator LENGTH_COMPARATOR = new SortByLength();
   
   @Override
@@ -54,14 +58,18 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
+    //response.setContentType("text/html;");
     //response.getWriter().println("<h1>Hello Dequan!</h1>");
     //DataServlet.TIME_VISTED++;
     //response.getWriter().println("<p1>You have visted "+DataServlet.TIME_VISTED+" Times </p1>");
     /*for(String quote : quotes){
         response.getWriter().println(quote);
     }*/
-    response.getWriter().println(quotes);
+    //response.getWriter().println(quotes);
+
+    /*
+    Below is example getting data from the data base
+    */
   }
   
  private String toJason(ArrayList<String> list){
@@ -78,45 +86,100 @@ public class DataServlet extends HttpServlet {
   }
 
    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-       String input = request.getParameter("text-input");
-       String[] inputs = input.split(",");
+       String inputComment = request.getParameter("text-input");
+       String[] inputs = inputComment.split(",");
        comments = Arrays.asList(inputs);
-       if(Boolean.parseBoolean(request.getParameter("sort-by-length"))){
-           Collections.sort(comments,LENGTH_COMPARATOR);
-       }
-       if(Boolean.parseBoolean(request.getParameter("sort-by-comments"))){
-            Collections.sort(comments,COMMENTS_COMPARATOR);
-       }
-       printComments(comments, response);
-
-       // Below is use for data bases
+       //*****Below is use for putting data to data bases
         Entity commentsEntity = new Entity("Comments");
         long timestamp = System.currentTimeMillis();
 
-        commentsEntity.setProperty("comments", comments);
+        commentsEntity.setProperty("comments", inputComment);
         commentsEntity.setProperty("timestamp", timestamp);
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(commentsEntity);
-   }
 
-    private void printComments(List<String> li, HttpServletResponse response) throws IOException{
+        //*****Below is retriving from data base
+
+        Query query = new Query("Comments").addSort("timestamp", SortDirection.DESCENDING);
+
+        //DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery results = datastore.prepare(query);
+
+        List<CommentDisplayer> display = new ArrayList<>();
+        for (Entity entity : results.asIterable()) {
+            //long id = entity.getKey().getId();
+            String databaseComment = (String)entity.getProperty("comments");
+            long databaseTimeStamp = (long) entity.getProperty("timestamp");
+
+            CommentDisplayer comment = new CommentDisplayer(databaseComment, databaseTimeStamp);
+            display.add(comment);
+        }
+
+        //Gson gson = new Gson();
+        //response.setContentType("application/json;");
+        //response.getWriter().println(gson.toJson(display));
+
+        //*** Below is printing to the page
+        if(Boolean.parseBoolean(request.getParameter("sort-by-length"))){
+            Collections.sort(display,LENGTH_COMPARATOR);
+        }
+        if(Boolean.parseBoolean(request.getParameter("sort-by-time"))){
+            Collections.sort(display,TIME_COMPARATOR);
+        }else{
+            Collections.sort(display);
+        }
+        //(display, response);
+        for(CommentDisplayer comment: display){
+            response.getWriter().println(comment);
+        }
+    }
+
+    private void printComments(List<CommentDisplayer> li, HttpServletResponse response) throws IOException{
+        response.setContentType("head/html");
+        response.getWriter().println("Comments Added!");
         response.setContentType("text/html");
-        for(String comments : li){
-            response.getWriter().println(comments+"</br>");
+        for(CommentDisplayer comments : li){
+            response.getWriter().println(comments);
         }
    }
-    private static class SortByName implements Comparator<String>{
-        public int compare(String c1, String c2){
-            return c1.compareTo(c2);
+    private static class SortByTime implements Comparator<CommentDisplayer>{
+        public int compare(CommentDisplayer c1, CommentDisplayer c2){
+            return Long.compare(c1.getTimeStamp(), c2.getTimeStamp());
         }
     }
 
-    private static class SortByLength implements Comparator<String>{
-        public int compare(String c1, String c2){
-            return Integer.compare(c1.length(), c2.length());
+    private static class SortByLength implements Comparator<CommentDisplayer>{
+        public int compare(CommentDisplayer c1, CommentDisplayer c2){
+            return Integer.compare(c1.getComment().length(),c2.getComment().length());
         }
     }
+}
+final class CommentDisplayer implements Comparable<CommentDisplayer>{
+
+  private final String comment;
+  private final long timestamp;
+
+  public CommentDisplayer(String comment, long timestamp) {
+    this.comment = comment;
+    this.timestamp = timestamp;
+  }
+
+   public String getComment(){
+       return comment;
+   }
+   public long getTimeStamp(){
+       return timestamp;
+   }
+  @Override
+  public String toString(){
+      return comment + " : " + timestamp;
+  }
+  
+  @Override
+  public int compareTo(CommentDisplayer other){
+      return this.comment.compareTo(other.comment);
+  }
 }
 
  
