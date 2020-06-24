@@ -32,3 +32,9 @@ async function getAlistOfQuotes(){
   const quote = await response.text();
   document.getElementById('quote-container').innerText = quote;
 }
+
+async function getComments(){
+  const response = await fetch('/data');
+  const quote = await response.text();
+  document.getElementById('comment-container').innerText = quote;
+}

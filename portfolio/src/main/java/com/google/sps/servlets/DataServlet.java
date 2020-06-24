@@ -68,8 +68,26 @@ public class DataServlet extends HttpServlet {
     //response.getWriter().println(quotes);
 
     /*
-    Below is example getting data from the data base
+    Below is example getting data from the data base onload
     */
+      Query query = new Query("Comments").addSort("timestamp", SortDirection.DESCENDING);
+
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery results = datastore.prepare(query);
+
+        List<CommentDisplayer> display = new ArrayList<>();
+        for (Entity entity : results.asIterable()) {
+            //long id = entity.getKey().getId();
+            String databaseComment = (String)entity.getProperty("comments");
+            long databaseTimeStamp = (long) entity.getProperty("timestamp");
+
+            CommentDisplayer comment = new CommentDisplayer(databaseComment, databaseTimeStamp);
+            display.add(comment);
+        }
+        response.setContentType("text/html");
+        for(CommentDisplayer comment: display){
+            response.getWriter().println(comment);
+        }
   }
   
  private String toJason(ArrayList<String> list){
@@ -129,7 +147,6 @@ public class DataServlet extends HttpServlet {
         }else{
             Collections.sort(display);
         }
-        //(display, response);
         for(CommentDisplayer comment: display){
             response.getWriter().println(comment);
         }

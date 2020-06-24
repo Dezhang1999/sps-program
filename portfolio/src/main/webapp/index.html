@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="getComments()">
     <div id="content">
       <h1>Dequan Zhang</h1>
       <p>This is my portfolio.</p>
@@ -21,8 +21,11 @@
       <button onclick="addRandomGreeting()">Facts about me</button>
       <div id="greeting-container"></div>
       <img src="images/770343.jpg" height="100" width="100">
+      <!--Don't need the button now
       <button onclick="getAlistOfQuotes()">Get a list of my favoite quote</button>
       <div id="quote-container"></div>
+      ------>
+      <div id="comment-container">List of comments</div>
     </div>
 
     <form action="/data" method="POST">
