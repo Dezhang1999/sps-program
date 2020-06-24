@@ -13,12 +13,16 @@
 // limitations under the License.
 
 package com.google.sps.servlets;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import java.util.*;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -27,7 +31,7 @@ public class DataServlet extends HttpServlet {
   private List<String> quotes, comments;
   private static Comparator COMMENTS_COMPARATOR = new SortByName();
   private static Comparator LENGTH_COMPARATOR = new SortByLength();
-
+  
   @Override
   public void init() {
     quotes = new ArrayList<String>();
@@ -84,9 +88,19 @@ public class DataServlet extends HttpServlet {
             Collections.sort(comments,COMMENTS_COMPARATOR);
        }
        printComments(comments, response);
+
+       // Below is use for data bases
+        Entity commentsEntity = new Entity("Comments");
+        long timestamp = System.currentTimeMillis();
+
+        commentsEntity.setProperty("comments", comments);
+        commentsEntity.setProperty("timestamp", timestamp);
+
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(commentsEntity);
    }
 
-   private void printComments(List<String> li, HttpServletResponse response) throws IOException{
+    private void printComments(List<String> li, HttpServletResponse response) throws IOException{
         response.setContentType("text/html");
         for(String comments : li){
             response.getWriter().println(comments+"</br>");
