@@ -28,7 +28,7 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void init() {
-    quotes = new ArrayList<>();
+    quotes = new ArrayList<String>();
     quotes.add(
         "A ship in port is safe, but that is not what ships are for. "
             + "Sail out to sea and do new things. - Grace Hopper");
@@ -52,16 +52,22 @@ public class DataServlet extends HttpServlet {
     //response.getWriter().println("<h1>Hello Dequan!</h1>");
     //DataServlet.TIME_VISTED++;
     //response.getWriter().println("<p1>You have visted "+DataServlet.TIME_VISTED+" Times </p1>");
-    for(String quote : quotes){
+    /*for(String quote : quotes){
         response.getWriter().println(quote);
-    }
+    }*/
+    response.getWriter().println(quotes);
   }
-
-  private String toJason(ArrayList<String> list){
-      String jason = "{";
-      for(int i=0;i<list.size(),i++){
-          jason+="\quote"+i+"\:"; 
-          jason+="\"+
-      }
+  
+ private String toJason(ArrayList<String> list){
+    String jason = "{";
+     for(int i = 0; i<list.size(); i++){
+         jason+="\"quote"+i+"\"+: ";
+         jason+=list.get(i);
+         if(i != list.size()-1){
+             jason+=",";
+         }
+     }
+     jason+="}";
+     return jason;     
   }
 }
