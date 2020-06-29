@@ -28,7 +28,7 @@
       <div id="comment-container">List of comments</div>
     </div>
 
-    <form action="/data" method="POST">
+    <form action="/data" method="POST" id='myForm' name="myForm">
 
       <p>Enter comment:</p>
       <textarea name="text-input" >Comment Here</textarea>
@@ -39,8 +39,7 @@
       <br/>
       <input type="checkbox" name="sort-by-time" value="true"> Sort comments by time
       <br/><br/>
-
-      <input type="submit"/>
+      <button type="submit">Submit Here!</button>
     </form>
 
   </body>

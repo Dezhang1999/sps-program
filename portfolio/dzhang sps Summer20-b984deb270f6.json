@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "dzhang-sps-summer20",
+  "private_key_id": "b984deb270f639f8a36dba255fda5aaddfc6d350",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDdnWXRQFPU7USr\nYiw2RFgY8rKo5QYVEGcJe3ASY74zqjU0PvQW2LipgdmDaP0EMINxxrAAKMq9HBx8\nTaJ2Qc2Xa8BOBL0EPp1jlF1dc3tZPbrzXFIzTki4av1M2T940kGem4RmJSsHQgCA\nqmAf81lMjGGe1an03GoAnd+YSRO6yjw67rbeTjRvApl61HkhceU7ZHV/7z2vcPGB\n3ZzDdQ/UftKafA9dXzNVBoiGkrsH4ou7G/veBNXJemNdiDgKO7YbH3xpAMM4xXRw\nuoYGSER+TeYJflzb4NPLLFaydyDOAqcbTOGyi5Hw0oNsVYxdRy5m2nbZAB/BIyJS\nNhY5fplbAgMBAAECggEAB8GzvRxhHXGajDHDoLieqWzhN6EgfTSVmVLdNtTlOjNf\nE6+PuoxRAPnUWPxKks7MjaW/JkTx56boEP+59nqneAEjpMzB/Y01frVELqT/8Gfa\njHGy8ixvcNOp1E/sSqMipysD+iabOBtQH4YXFuHdF8f4E2egwGXF6LSd4rDNbyWx\nO1kqG/XnlWwY719jUd8TyoqE/DKwxLjnp3im8QA9zw0YTgAWO5tHFLbZAcllbLFc\nY/Usu7uOhYRKVumw1M+tY5lZlyPXKrUprtjuIAZRipcRrX5UO1/4geN+1u0ri2HG\n0HtJZAueLvrx6ynCKtUnrnO5P48woskLROGU1QC5eQKBgQD9tmMuNML2hJoG3kwZ\n20imWdNjZ/QVgTFk+YhsWkgSxOKTmO8CGzUvwnyqI8YSoCk1sFRB7UU7lRAOVD67\n1lV9Ws1fE4nUTezt4mPPTWgZ/2mLKu6foDegky+g8tObu3Aa9u0981roDs1C3+fr\nAu436qDUI/kkyQR9S/LV1UMkMwKBgQDfnOxkUkS0FgG1b2PkvdlM/FqkdMKFmkLa\n5F8c6z92J8iDVYHwl4ooehY0P/ipb9bTzWjXi1fDmfocumrKSa39AzNPOMWGFDuH\nugmZSE+mjaFFGYZNWKe+Z2/cAAhuaUVtEaGq2jc9w+kQnxCb6VAbfQ3dV4KnC8wz\nYheI8WxOOQKBgQCegIZfxIiUl+zeI5ypfqxZeL6uWLBNiwO/0IDhKFnkl+nxSdbv\nmu3UY42cgXLqCfMU3o8VDNV2zr5UJV933ARWpxassjkmUHSXfRrb1MEXlNBsKCsh\nwGdgQvO7elim7yevQNqgHFuLpEup3tY1pQQMHOHTBpJM3+SVHpCb9HrYrwKBgQDR\nQVdSNk6GvAVTVW8Essi0K39jYMRcJFSl5IpBVMApgOc6R/12OUmXwVAgCzFW1gsS\nX6nZ81Lo/6G32pduv+5q0+DjJPxrEWn4BJdQ8wNemDEvqcgtf2ZSXxelp/473JWU\nkKhaayTAzyG+ZSw0yuwlHSypUmg4jGjGOOhPRaWVuQKBgQD1+xqxJQmpw4e9IXz6\njET0RisDxpAAnsicbhVayWO2Xw5j2+8Csaw+ChfDRtiVWSSjOxhP7Z6gwBJp2xdf\njKBLzwG32g80RN02oMg3tJ+U0tYyAmCl+gE1GRgudAJ7oyTH8GU99/dcB7k8Sf3Y\n1SF6JNclf2c6jjSAKDiUoLqqkA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "translation@dzhang-sps-summer20.iam.gserviceaccount.com",
+  "client_id": "102547448940240018269",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/translation%40dzhang-sps-summer20.iam.gserviceaccount.com"
+}

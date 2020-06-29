@@ -39,7 +39,6 @@ import java.time.format.DateTimeFormatter;
 public class DataServlet extends HttpServlet {
     private static int TIME_VISTED = 0;
     private List<String> quotes, comments;
-    // private static Comparator TIME_COMPARATOR = new SortByTime();
     private static Comparator LENGTH_COMPARATOR = new SortByLength();
     private static final DateTimeFormatter FORMAT = DateTimeFormatter
             .ofPattern("EEEE, LLLL/dd/YYYY 'at' HH:mm:ss a");
@@ -63,19 +62,6 @@ public class DataServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // response.setContentType("text/html;");
-        // response.getWriter().println("<h1>Hello Dequan!</h1>");
-        // DataServlet.TIME_VISTED++;
-        // response.getWriter().println("<p1>You have visted "+DataServlet.TIME_VISTED+"
-        // Times </p1>");
-        /*
-         * for(String quote : quotes){ response.getWriter().println(quote); }
-         */
-        // response.getWriter().println(quotes);
-
-        /*
-         * Below is example getting data from the data base onload
-         */
         Query query = new Query("Comments").addSort("timestamp", SortDirection.DESCENDING);
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

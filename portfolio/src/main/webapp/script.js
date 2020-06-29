@@ -39,3 +39,15 @@ async function getComments(){
   console.log(comments)
   document.getElementById('comment-container').innerText = comments;
 }
+
+$('#myForm').submit(function(e){
+    e.preventDefault();
+    $.ajax({
+        url:'/data',
+        type:'post',
+        data:$('#myForm').serialize(),
+        success:function(){
+            document.getElementById('comment-container').innerText = "";
+        }
+    });
+});
