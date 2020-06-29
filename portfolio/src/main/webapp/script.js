@@ -35,6 +35,7 @@ async function getAlistOfQuotes(){
 
 async function getComments(){
   const response = await fetch('/data');
-  const quote = await response.text();
-  document.getElementById('comment-container').innerText = quote;
+  const comments = await response.text();
+  console.log(comments)
+  document.getElementById('comment-container').innerText = comments;
 }
