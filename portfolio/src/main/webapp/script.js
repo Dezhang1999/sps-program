@@ -38,16 +38,8 @@ async function getComments(){
   const comments = await response.text();
   console.log(comments)
   document.getElementById('comment-container').innerText = comments;
+  response = await fetch('/login');
+  const logout = response.text();
+  document.getElementById('logout').innerHTML=logout;
 }
 
-$('#myForm').submit(function(e){
-    e.preventDefault();
-    $.ajax({
-        url:'/data',
-        type:'post',
-        data:$('#myForm').serialize(),
-        success:function(){
-            document.getElementById('comment-container').innerText = "";
-        }
-    });
-});
