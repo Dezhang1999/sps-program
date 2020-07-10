@@ -6,16 +6,17 @@
     <title>Dequan's Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBCsbaPllICbnDCzu7LUferRyWhGRgdvlQ"></script>
 </head>
 
-<body onload="getComments()">
+<body onload="getComments(); createMap();">
     <div id="content">
         <h1>Dequan Zhang</h1>
         <p>This is my portfolio.</p>
         <p>I'm currently a EECS transfer student at UC Berkeley! I have been a TA in Data Sturcture in Java.
             <br> I have an internship at LaunchDarkly before, which is a startup in Oakland, CA.
         </p>
-
+        <div id="map"></div>
         <ul>
             <li><a href="https://github.com/Dezhang1999">Git Hub</a></li>
             <li><a href="https://www.linkedin.com/in/dequan-zhang-021209158/">linkedIn</a></li>
@@ -29,7 +30,6 @@
       ------>
         <div id="comment-container">List of comments</div>
     </div>
-
     <form action="/data" method="POST" id='myForm' name="myForm">
 
         <p>Enter comment:</p>

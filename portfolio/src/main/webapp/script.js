@@ -38,8 +38,11 @@ async function getComments(){
   const comments = await response.text();
   console.log(comments)
   document.getElementById('comment-container').innerText = comments;
-  response = await fetch('/login');
-  const logout = response.text();
-  document.getElementById('logout').innerHTML=logout;
+}
+
+function createMap() {
+  const map = new google.maps.Map(
+      document.getElementById('map'),
+      {center: {lat: 37.422, lng: -122.084}, zoom: 16});
 }
 

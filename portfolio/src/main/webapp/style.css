@@ -16,3 +16,9 @@ form {
 margin: 0 auto; 
 width:250px;
 }
+
+#map {
+  border: thin solid black;
+  height: 500px;
+  width: 650px;
+}
