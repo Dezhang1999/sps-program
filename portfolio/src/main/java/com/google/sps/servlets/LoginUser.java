@@ -13,19 +13,19 @@ public class LoginUser extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html");
-
     UserService userService = UserServiceFactory.getUserService();
+    response.setContentType("text/html");
     if (userService.isUserLoggedIn()) {
-        String userEmail = userService.getCurrentUser().getEmail();
         String urlToRedirectToAfterUserLogsOut = "/";
         String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
-        response.sendRedirect("index.html");
-        String urlToRedirectToAfterUserLogsIn = "/";
-        //String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
-        response.getWriter().println("<a href=\"" + logoutUrl + "\"><button>Log out</button></a>");
-        }
+        response.sendRedirect(logoutUrl);
     }
+    else{
+        String urlToRedirectToAfterUserLogsIn = "/";
+        String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
+        response.sendRedirect(loginUrl);
+    }
+  }
 }
 
   
