@@ -13,47 +13,181 @@
 // limitations under the License.
 
 package com.google.sps.servlets;
+
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.gson.Gson;
 import java.util.*;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+
+/**
+ * Servlet that returns some example content. TODO: modify this file to handle
+ * comments data
+ */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private static int TIME_VISTED = 0;
-  private List<String> quotes;
+    private List<String> quotes, comments;
+    private static Comparator TIME_COMPARATOR = new SortByTime();
+    private static final DateTimeFormatter FORMAT = DateTimeFormatter
+            .ofPattern("EEEE, LLLL/dd/YYYY 'at' HH:mm:ss a");
 
-  @Override
-  public void init() {
-    quotes = new ArrayList<>();
-    quotes.add(
-        "A ship in port is safe, but that is not what ships are for. "
-            + "Sail out to sea and do new things. - Grace Hopper");
-    quotes.add("They told me computers could only do arithmetic. - Grace Hopper");
-    quotes.add("A ship in port is safe, but that's not what ships are built for. - Grace Hopper");
-    quotes.add("It is much easier to apologise than it is to get permission. - Grace Hopper");
-    quotes.add("If you can't give me poetry, can't you give me poetical science? - Ada Lovelace");
-    quotes.add("I am in a charming state of confusion. - Ada Lovelace");
-    quotes.add(
-        "The Analytical Engine weaves algebraic patterns, "
-            + "just as the Jacquard loom weaves flowers and leaves. - Ada Lovelace");
-    quotes.add(
-        "Sometimes it is the people no one can imagine anything of "
-            + "who do the things no one can imagine. - Alan Turing");
-    quotes.add("Those who can imagine anything, can create the impossible. - Alan Turing");
-  }
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
-    //response.getWriter().println("<h1>Hello Dequan!</h1>");
-    //DataServlet.TIME_VISTED++;
-    //response.getWriter().println("<p1>You have visted "+DataServlet.TIME_VISTED+" Times </p1>");
-    for(String quote : quotes){
-        response.getWriter().println(quote);
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        UserService userService = UserServiceFactory.getUserService();
+            //Below is for data not associate with email
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            Query query = new Query("Comments");
+            Query loginQuery = new Query("Login-Comment");
+            PreparedQuery results = datastore.prepare(query);
+            PreparedQuery loginResult = datastore.prepare(loginQuery);
+
+            ArrayList<CommentDisplayer> display = new ArrayList<>();
+            for(Entity entity : results.asIterable()) {
+                String databaseComment = (String) entity.getProperty("comments");
+                String databaseTimeStamp = (String)entity.getProperty("timestamp");
+                long tstamp = 0;
+                try{
+                    tstamp = (long)entity.getProperty("tstamp");
+                }catch(NullPointerException ex){
+                }
+                CommentDisplayer comment = new CommentDisplayer(databaseComment, databaseTimeStamp,false,null,tstamp);
+                display.add(comment);
+            }
+            for(Entity entity : loginResult.asIterable()) {
+                String databaseComment = (String) entity.getProperty("comments");
+                String databaseTimeStamp = (String)entity.getProperty("timestamp");
+                String databaseEmail = (String)entity.getProperty("email");
+                long tstamp = 0;
+                try{
+                    tstamp = (long)entity.getProperty("tstamp");
+                }catch(NullPointerException ex){
+                }
+                CommentDisplayer comment = new CommentDisplayer(databaseComment, databaseTimeStamp, true, databaseEmail,tstamp);
+                display.add(comment);
+            }
+            Collections.sort(display,TIME_COMPARATOR);
+            for (CommentDisplayer comment : display) {
+                response.getWriter().println("<div class='comment-container'>"+comment+"</div>");
+            }    
+        }
+
+    private String toJason(ArrayList<String> list) {
+        String jason = "{";
+        for (int i = 0; i < list.size(); i++) {
+            jason += "\"quote" + i + "\"+: ";
+            jason += list.get(i);
+            if (i != list.size() - 1) {
+                jason += ",";
+            }
+        }
+        jason += "}";
+        return jason;
     }
-  }
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        UserService userService = UserServiceFactory.getUserService();
+        String inputComment = request.getParameter("text-input");
+        // *****Below is use for putting data to data bases
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<CommentDisplayer> display = new ArrayList<>();
+        long tStamp = System.currentTimeMillis();
+        
+        if(inputComment.trim().length() != 0){
+            if (userService.isUserLoggedIn()) {
+                Entity loginCommentsEntity = new Entity("Login-Comment");
+                String timestamp = LocalDateTime.now().format(FORMAT).toString();
+                String userEmail = userService.getCurrentUser().getEmail();
+                loginCommentsEntity.setProperty("email", userEmail);
+                loginCommentsEntity.setProperty("comments", inputComment);
+                loginCommentsEntity.setProperty("timestamp", timestamp);
+                loginCommentsEntity.setProperty("tstamp",tStamp);
+                datastore.put(loginCommentsEntity);
+            } else {
+                Entity commentsEntity = new Entity("Comments");
+                String timestamp = LocalDateTime.now().format(FORMAT).toString();
+                commentsEntity.setProperty("comments", inputComment);
+                commentsEntity.setProperty("timestamp", timestamp);
+                commentsEntity.setProperty("tstamp", tStamp);
+                datastore.put(commentsEntity);
+            }
+        }
+        // ****************Redirect to main page ****************
+        response.sendRedirect("index.html");
+
+    }
+
+    private static class SortByTime implements Comparator<CommentDisplayer> {
+        public int compare(CommentDisplayer c1, CommentDisplayer c2) {
+            return Long.compare(c2.getTimeStamp(),c1.getTimeStamp());
+        }
+    }
 }
+
+final class CommentDisplayer implements Comparable<CommentDisplayer> {
+
+    private final String comment;
+    private final String timestamp;
+    private final boolean login_flag;
+    private final String login_email;
+    private long tstamp = 0;
+    private final int sig_length = 68;
+    private final int timestamp_length=37;
+    public CommentDisplayer(String comment, String timestamp, boolean login_flag, String login_email, long tstamp) {
+        this.comment = comment;
+        this.timestamp = timestamp;
+        this.login_flag = login_flag;
+        this.login_email = login_flag ? login_email:"Anonymous";
+        this.tstamp = tstamp;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public long getTimeStamp() {
+        return tstamp;
+    }
+
+    @Override
+    public String toString() {
+        return "<div class='comment'>"+comment+"</div>"+"<br>"+format();
+    }
+
+    @Override
+    public int compareTo(CommentDisplayer other) {
+        return this.comment.compareTo(other.comment);
+    }
+
+    public String format(){
+        if(!login_email.equals("Anonymous")){
+            int lengthOfEmail = login_email.length();
+            int numberOf_ = sig_length - lengthOfEmail - timestamp_length;
+            String toAdd = "";
+            for(int i = 0; i < numberOf_; i++){
+                toAdd+="_";
+            }
+            toAdd+="on ";
+            return login_email+toAdd+timestamp;
+        }else{
+            return login_email+"______________________on "+timestamp;
+        }
+    }
+}
+
+
+ 
